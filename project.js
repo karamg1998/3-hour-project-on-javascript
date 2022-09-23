@@ -1,5 +1,3 @@
-
-
 var add_expense=document.querySelector('.save');
 
 add_expense.addEventListener('click',Run);
@@ -16,101 +14,118 @@ function Run(e){
         Category:category
        } 
       
-    var obj_serialised=JSON.stringify(myobj);
-    localStorage.setItem(document.getElementById('choosedescription').value, obj_serialised);
-
+    user(myobj);
     
-    var main=document.querySelector('.data');
-    
-    var new_element=document.createElement('li');
-    
-    var data1=document.createTextNode("=>Expense:"+expense+"-");
-    new_element.appendChild(data1);
-
-    var data2=document.createTextNode("Description:"+description+"-");
-    new_element.appendChild(data2);
-
-    var data3=document.createTextNode("Category:"+category+" ");
-    new_element.appendChild(data3);
-
-
-    var button_e=document.createElement('button');
-    button_e.className="edit";
-    button_e.textContent="Edit";
-    new_element.appendChild(button_e);
-
-    var button_d=document.createElement('button');
-    button_d.className="delete";
-    button_d.textContent="Delete";
-    new_element.appendChild(button_d);
-    
-    main.appendChild(new_element)
-
-    
+     
 }
 
 
+    function user(data)
+    {
+
+        var obj_serialised=JSON.stringify(data);
+        
+        localStorage.setItem(data.Description, obj_serialised);
+
+        var main=document.querySelector('.data');
+    
+        var new_element=document.createElement('li');
+        
+        new_element.id=data.Description;
+       
+        var data1=document.createTextNode("=>Expense:"+data.Expense+"-");
+        new_element.appendChild(data1);
+    
+        var data2=document.createTextNode("Description:"+data.Description+"-");
+        new_element.appendChild(data2);
+    
+        var data3=document.createTextNode("Category:"+data.Category+" ");
+        new_element.appendChild(data3);
+    
+    
+        var button_e=document.createElement('button');
+        button_e.className="edit";
+        button_e.textContent="Edit";
+        new_element.appendChild(button_e);
+    
+        var button_d=document.createElement('button');
+        button_d.className="delete";
+        button_d.textContent="Delete";
+        new_element.appendChild(button_d);
+        
+        main.appendChild(new_element)
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+   
+        for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const obj_de=JSON.parse(localStorage.getItem(key));
+        
+        user(obj_de);
+    }
+    }); 
+    
 var delete_expense=document.querySelector('.data');
 delete_expense.addEventListener('click',run2);
 
+
+
 function run2(e)
 {
-
-    for(var i=0;i<localStorage.length;i++)
-    {
-        var s=localStorage.key(i);
-        if(e.target.classList.contains('delete'))
+    if(e.target.classList.contains('delete'))
     {
         var li=e.target.parentElement;
         delete_expense.removeChild(li);
-        localStorage.removeItem(s);
+        var id=li.id;
+        
+        for(var i=0;i<localStorage.length;i++)
+      {
+        var s=localStorage.key(i);
+        if(s===id)
+        {
+            localStorage.removeItem(s);
+            
+        }
+        
+      }
+        
     }
-    }
-    
 }
 
-var edit_expense=document.querySelector('.data');
-edit_expense.addEventListener('click',run3);
-
- function run3(e)
+var edit=document.querySelector('.data');
+edit.addEventListener('click',run3);
+ 
+function run3(e)
 {
+
     if(e.target.classList.contains('edit'))
     {
-        var li=e.target.parentElement;
-        edit_expense.removeChild(li);
+        var li1=e.target.parentElement;
+        edit.removeChild(li1);
+        var object=JSON.parse(localStorage.getItem(li1.id));
+        retrive(object);
+        
+        for(var i=0;i<localStorage.length;i++)
+        {
+          var s=localStorage.key(i);
+          if(s===li1.id)
+          {
+              localStorage.removeItem(s);
+              
+          }
+          
+        }
+        
     }
 }
 
-window.addEventListener('DOMContentLoaded', (event) => {
-   
-    for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const obj_de=JSON.parse(localStorage.getItem(key));
-    
-    var m=document.querySelector('.data');
-    
-    var n_element=document.createElement('li');
-    
-    var d1=document.createTextNode("=>Expense:"+obj_de.Expense+"-");
-    n_element.appendChild(d1);
-
-    var d2=document.createTextNode("Description:"+obj_de.Description+"-");
-    n_element.appendChild(d2);
-
-    var d3=document.createTextNode("Category:"+obj_de.Category+" ");
-    n_element.appendChild(d3);
-
-
-    var b_e=document.createElement('button');
-    b_e.className="edit";
-    b_e.textContent="Edit";
-    n_element.appendChild(b_e);
-
-    var b_d=document.createElement('button');
-    b_d.className="delete";
-    b_d.textContent="Delete";
-    n_element.appendChild(b_d);
-    
-    m.appendChild(n_element)
+function retrive(user)
+{
+    var e=document.getElementById('expenseamount');
+    e.value=user.Expense;
+    var d=document.getElementById('choosedescription');
+    d.value=user.Description;
+    var c=document.getElementById('category');
+    c.value=user.Category;
 }
-}); 
